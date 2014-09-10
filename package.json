@@ -1,0 +1,24 @@
+{
+  "name": "arduino-serial",
+  "version": "0.0.1",
+  "description": "Arduino code to send data over serial based on button states and NodeJS code to read data from serial",
+  "author": {
+    "name": "Jason Solis",
+    "url": "http://about.me/jsolis"
+  },
+  "main": "app.js",
+  "dependencies": {
+    "serialport": "1.4.6",
+    "request": "2.42.0"
+  },
+  "devDependencies": {
+  },
+  "engines": {
+    "node": ">=0.10.0"
+  },
+  "scripts": {
+    "start": "node app.js"
+  },
+  "private": true
+}
+
