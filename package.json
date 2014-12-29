@@ -8,7 +8,7 @@
   },
   "main": "app.js",
   "dependencies": {
-    "serialport": "1.4.6",
+    "serialport": "1.4.9",
     "request": "2.42.0"
   },
   "devDependencies": {
