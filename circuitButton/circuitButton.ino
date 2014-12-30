@@ -10,8 +10,7 @@ boolean holding1,holding2 = false;
 
 LiquidCrystal lcd(12,11,5,4,3,2);
 
-int count1 = 0;
-int count2 = 0;
+String message;
 
 void setup() {
   // initialize serial communication at 9600 bits per second:
@@ -39,9 +38,8 @@ void loop() {
   if (button1State == LOW && !holding1)  {
     holding1 = true;
     digitalWrite(ledPin, HIGH);
-    Serial.write("button1\n");
+    Serial.print("button1\n");
     lcd.setCursor(0,0);
-    lcd.print(++count1);
   } else if (button1State == HIGH && holding1) {
     holding1 = false;
     digitalWrite(ledPin, LOW);
@@ -50,12 +48,19 @@ void loop() {
   if (button2State == LOW && !holding2)  {
     holding2 = true;
     digitalWrite(ledPin, HIGH);
-    Serial.write("button2\n");
+    Serial.print("button2\n");
     lcd.setCursor(0,1);
-    lcd.print(++count2);
   } else if (button2State == HIGH && holding2) {
     holding2 = false;
     digitalWrite(ledPin, LOW);
+  }
+  
+  if (Serial.available() > 0) {
+    while (Serial.available() > 0) {
+      message += char(Serial.read());
+    }
+    lcd.print(message);
+    message = "";
   }
   
   delay(100);

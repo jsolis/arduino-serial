@@ -14,8 +14,10 @@ serialport.on('open', function(){
 
     if (data === 'button1') {
       console.log('making call for button1');
+      serialport.write('foobar success');
     } else if (data === 'button2') {
       console.log('making call for button2');
+      serialport.write('barfoo worked');
     }
   });
 });
