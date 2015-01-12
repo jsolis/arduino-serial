@@ -11,18 +11,26 @@ var commands = [
     url: 'https://api.github.com/users/jsolis',
     method: 'GET',
     displayName: 'jsolis location',
-    arduinoResponse: 'location'
+    arduinoResponse: {
+      line1: '',
+      line2: 'location'
+    }
   },
   {
     url: 'https://api.github.com/repos/jsolis/arduino-serial',
     method: 'GET',
     displayName: 'arduino-serial owner',
-    arduinoResponse: 'owner.login'
+    arduinoResponse: {
+      line1: 'owner.login',
+      line2: 'updated_at'
+    }
   }  
 ];
 
 function getDeepValue(obj, deepKey) {
-  if (deepKey.indexOf('.') === -1) {
+  if (!deepKey) {
+    return '';
+  } else if (deepKey.indexOf('.') === -1) {
     return obj[deepKey];
   } else {
     var matches = deepKey.match(/(\w+?)\./);
@@ -68,11 +76,18 @@ serialport.on('open', function(){
 	console.log(body);
 
         var resp = JSON.parse(body);
-        var arduinoResponse = getDeepValue(resp, command.arduinoResponse);
-        console.log('arduinoResponse: ', arduinoResponse);
+        var arduinoResponseLine1 = getDeepValue(resp, command.arduinoResponse.line1);
+        var arduinoResponseLine2 = getDeepValue(resp, command.arduinoResponse.line2);
+        console.log('arduinoResponseLine1: ', arduinoResponseLine1);
+        console.log('arduinoResponseLine2: ', arduinoResponseLine2);
+
+        var arduinoResponse = {
+          line1: arduinoResponseLine1,
+          line2: arduinoResponseLine2
+        };
 
 	if (!error && response.statusCode == 200) {
-	  serialport.write(arduinoResponse);
+	  serialport.write(JSON.stringify(arduinoResponse));
 	  serialport.write('\n');
 	}
       });

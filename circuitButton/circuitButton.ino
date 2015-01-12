@@ -13,7 +13,7 @@ LiquidCrystal lcd(12,11,5,4,3,2);
 
 String message;
 
-const int BUFFER_SIZE = JSON_OBJECT_SIZE(3);
+const int BUFFER_SIZE = JSON_OBJECT_SIZE(2);
 StaticJsonBuffer<BUFFER_SIZE> jsonBuffer;
 JsonObject& root = jsonBuffer.createObject();
 
@@ -36,6 +36,11 @@ void setup() {
   lcd.print("Select command");
 }
 
+void clearLCDLine(int lineno) {
+  lcd.setCursor(0,lineno);
+  lcd.print("                ");
+  lcd.setCursor(0,lineno);
+}
 
 void loop() {
   int button1State, button2State;
@@ -85,29 +90,29 @@ void loop() {
     Serial.print(json);
     Serial.print("\n");
     
-    // clear line 1
-    lcd.setCursor(0,0);
-    lcd.print("                ");
-    lcd.setCursor(0,0);
-    
-    // print displayName for now...
-    lcd.print(json);
-    
-    // clear line 2
-    lcd.setCursor(0,1);
-    lcd.print("                ");
-    lcd.setCursor(0,1);
-    
-    /*DynamicJsonBuffer cmdBuffer;
-    JsonObject& cmdRoot = cmdBuffer.parseObject(json);
-    
-    if (cmdRoot.success()) {
-      Serial.print("debug: parseObject success!\n");
-      String location = cmdRoot["location"].asString();
-      lcd.print(location);
+    if (json[0] == '{') {
+      DynamicJsonBuffer cmdBuffer;
+      JsonObject& cmdRoot = cmdBuffer.parseObject(json);
+      
+      if (cmdRoot.success()) {
+        Serial.print("debug: parseObject success!\n");
+        String line1 = cmdRoot["line1"].asString();
+        String line2 = cmdRoot["line2"].asString();
+        if (line1 != "") {
+          clearLCDLine(0);
+          lcd.print(line1);
+        }
+        if (line2 != "") {
+          clearLCDLine(1);
+          lcd.print(line2);
+        }
+      } else {
+        lcd.print("parseObject error");
+      }
     } else {
-      lcd.print("parseObject error");
-    }*/
+      lcd.clear();
+      lcd.print(json);
+    }
     
     message = "";
   }
