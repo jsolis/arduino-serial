@@ -24,7 +24,10 @@ var commands = [
       line1: 'owner.login',
       line2: 'updated_at'
     }
-  }  
+  },
+  {
+    displayName: 'tres leches'
+  } 
 ];
 
 function getDeepValue(obj, deepKey) {
@@ -54,6 +57,7 @@ serialport.on('open', function(){
 
     if (/^GET-DISLAY-NAME:/.test(data)) {
       var commandIndex = data.replace(/^GET-DISLAY-NAME:/, '');
+      commandIndex = commandIndex % commands.length;
       var command = commands[commandIndex];
       var displayName = command.displayName;
       serialport.write(displayName);
@@ -62,6 +66,7 @@ serialport.on('open', function(){
     } else if (/^RUN-COMMAND:/.test(data)) {
 
       var commandIndex = data.replace(/^RUN-COMMAND:/, '');
+      commandIndex = commandIndex % commands.length;
       var command = commands[commandIndex];
 
       console.log('arduino command index: ' + commandIndex);
