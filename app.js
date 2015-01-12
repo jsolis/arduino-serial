@@ -21,6 +21,17 @@ var commands = [
   }  
 ];
 
+function getDeepValue(obj, deepKey) {
+  if (deepKey.indexOf('.') === -1) {
+    return obj[deepKey];
+  } else {
+    var matches = deepKey.match(/(\w+?)\./);
+    var thisKey = matches[1];
+    var nextObj = obj[thisKey];
+    var nextKey = deepKey.replace(thisKey+'.','');
+    return getDeepValue(nextObj, nextKey);
+  }
+}
 
 serialport.on('open', function(){
   console.log('Serial Port Opend');
@@ -57,7 +68,8 @@ serialport.on('open', function(){
 	console.log(body);
 
         var resp = JSON.parse(body);
-        var arduinoResponse = resp[command.arduinoResponse];
+        var arduinoResponse = getDeepValue(resp, command.arduinoResponse);
+        console.log('arduinoResponse: ', arduinoResponse);
 
 	if (!error && response.statusCode == 200) {
 	  serialport.write(arduinoResponse);
