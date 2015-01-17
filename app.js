@@ -1,4 +1,8 @@
-var serialport = require('serialport');
+var twilio = require('twilio'),
+    express = require('express'),
+    bodyParser = require('body-parser'),
+    serialport = require('serialport');
+
 var SerialPort = serialport.SerialPort;
 var serialport = new SerialPort('/dev/tty.usbserial-DA00UJER', {
   parser: serialport.parsers.readline('\n')
@@ -30,6 +34,27 @@ var commands = [
   } 
 ];
 
+var app = express();
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
+
+app.post('/sms', function(req, res){
+  serialPort.write(req.body.Body + '\n', function(err, results) {
+    if (err) {
+      console.log('err ' + err);
+    }
+    console.log('results ' + results);
+  });
+
+  var resp = new twilio.TwimlResponse();
+  resp.message(function() {
+    this.body('command received...');
+    //.media('http://media.giphy.com/media/y3ADSTHiLwhEs/giphy.gif');
+  });
+  res.type('text/xml');
+  res.send(resp.toString());
+});
+
 function getDeepValue(obj, deepKey) {
   if (!deepKey) {
     return '';
@@ -46,6 +71,9 @@ function getDeepValue(obj, deepKey) {
 
 serialport.on('open', function(){
   console.log('Serial Port Opend');
+
+  // Start listening on 3000 for Twilio
+  app.listen(3000);
 
   serialport.on('data', function(data){
     if (data.indexOf('debug:') > -1) {
