@@ -38,8 +38,12 @@ var app = express();
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
+app.get('/sms', function(req, res) {
+  res.send('OK');
+});
+
 app.post('/sms', function(req, res){
-  serialPort.write(req.body.Body + '\n', function(err, results) {
+  serialport.write(req.body.Body + '\n', function(err, results) {
     if (err) {
       console.log('err ' + err);
     }
