@@ -30,7 +30,13 @@ var commands = [
     }
   },
   {
-    displayName: 'tres leches'
+    url: 'https://api.forecast.io/forecast/2a757ca3116209d20039e3e9bac1aae2/41.2401227,-73.1985881?units=us',
+    method: 'GET',
+    displayName: 'Trumbull Forecast',
+    arduinoResponse: {
+      line1: 'currently.temperature',
+      line2: 'hourly.summary'
+    }
   } 
 ];
 
@@ -63,7 +69,7 @@ function getDeepValue(obj, deepKey) {
   if (!deepKey) {
     return '';
   } else if (deepKey.indexOf('.') === -1) {
-    return obj[deepKey];
+    return String(obj[deepKey]);
   } else {
     var matches = deepKey.match(/(\w+?)\./);
     var thisKey = matches[1];
