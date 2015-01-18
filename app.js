@@ -1,7 +1,8 @@
 var twilio = require('twilio'),
     express = require('express'),
     bodyParser = require('body-parser'),
-    serialport = require('serialport');
+    serialport = require('serialport'),
+    _ = require('lodash');
 
 var SerialPort = serialport.SerialPort;
 var serialport = new SerialPort('/dev/tty.usbserial-DA00UJER', {
@@ -49,20 +50,40 @@ app.get('/sms', function(req, res) {
 });
 
 app.post('/sms', function(req, res){
-  serialport.write(req.body.Body + '\n', function(err, results) {
-    if (err) {
-      console.log('err ' + err);
-    }
-    console.log('results ' + results);
+
+  var smsMessage = req.body.Body.trim();
+
+  var commandIndex = _.findIndex(commands, function(command) {
+    return command.displayName.toLowerCase() === smsMessage.toLowerCase();
   });
+
+  var commandDescription = "unknown";
+
+  if (commandIndex > -1) {
+
+    serialport.write('command found...\n');
+
+    commandDescription = "command received";
+  } else {
+
+    serialport.write(smsMessage + '\n', function(err, results) {
+      if (err) {
+	console.log('err ' + err);
+      }
+      console.log('results ' + results);
+    });
+
+    commandDescription = "message displayed";
+  }
 
   var resp = new twilio.TwimlResponse();
   resp.message(function() {
-    this.body('command received...');
+    this.body(commandDescription);
     //.media('http://media.giphy.com/media/y3ADSTHiLwhEs/giphy.gif');
   });
   res.type('text/xml');
   res.send(resp.toString());
+
 });
 
 function getDeepValue(obj, deepKey) {
