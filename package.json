@@ -10,6 +10,7 @@
   "dependencies": {
     "body-parser": "^1.10.1",
     "express": "^4.11.0",
+    "lodash": "^2.4.1",
     "request": "2.42.0",
     "serialport": "1.4.9",
     "twilio": "^1.10.0"
