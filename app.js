@@ -98,16 +98,20 @@ app.get('/sms', function(req, res) {
 app.post('/sms', function(req, res){
 
   var smsMessage = req.body.Body.trim();
+  var commandIndex;
 
-  var commandIndex = _.findIndex(commands, function(command) {
-    return command.displayName.toLowerCase() === smsMessage.toLowerCase();
-  });
+  if (!isNaN(smsMessage)) {
+    commandIndex = parseInt(smsMessage);
+  } else {
+    commandIndex = _.findIndex(commands, function(command) {
+      return command.displayName.toLowerCase() === smsMessage.toLowerCase();
+    });
+  }
 
   var commandDescription = "unknown";
 
   if (commandIndex > -1) {
 
-    //serialport.write('command found...\n');
     runCommand(commandIndex);
 
     commandDescription = "command received";
@@ -117,7 +121,6 @@ app.post('/sms', function(req, res){
       if (err) {
 	console.log('err ' + err);
       }
-      console.log('results ' + results);
     });
 
     commandDescription = "message displayed";
